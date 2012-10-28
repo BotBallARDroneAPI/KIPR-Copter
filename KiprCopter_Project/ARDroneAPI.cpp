@@ -15,6 +15,8 @@
 using namespace ARDrone;
 using namespace std;
 
+
+
 Drone * myDrone;
 bool drone_connected = false;
 
@@ -35,7 +37,9 @@ float requested_yaw_vel = 0.0;
 float requested_z_vel = 0.0;
 int control_pid;
 
-void watchdog(); //Process
+std::vector<VisionTag> visionTagVector;
+
+void watchdog(); //Process....Deprecated
 void monitor_sensors(); //Process
 void init_position_tracking();
 void update_position_tracking();
@@ -190,7 +194,17 @@ void update_position_tracking()
 	if(latest_data.flags.controlWatchdogDelayed)
 		myDrone->controller().sendWatchDog();
 	
-	
+	//copy vision tag vector
+	visionTagVector = latest_data.visionTagVector;
+
+
+	//for testing.... output visionTagVector types
+	for(int i = 0; i < visionTagVector.size(); i++)
+	{
+		printf("Index: %d, Type: %d\n", i, visitionTagVector.at(i).type);
+	}
+
+
 	bool zero_vx = false;
 	bool zero_vy = false;
 	bool zero_z = false;
@@ -419,4 +433,32 @@ void drone_set_ultrasound_channel(int channel)
 		myDrone->controller().setUltrasoundFrequency(CHANNEL_22MHZ);		
 }
 
+
+void drone_set_detection(int detectType)
+{
+	switch detectType
+	{
+		case 0:
+			myDrone->controller().disableDroneTagging();
+			break;
+		case 1:
+			myDrone->controller().detectColor(GREEN);
+			break;
+		case 2:
+			myDrone->controller()..detectColor(YELLOW);
+			break;
+		case 3:
+			myDrone->controller()..detectColor(BLUE);
+			break;
+		case 4:
+			myDrone->controller().detectGroundStripe(ORANGE_GREEN);
+			break;
+		case 5:
+			myDrone->controller().detectGroundStripe(YELLOW_BLUE);
+			break;
+		case 6:
+			myDrone->controller().detectRoundel_BW();
+			break;
+	}
+}
 

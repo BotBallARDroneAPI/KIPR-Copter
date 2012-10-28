@@ -170,6 +170,20 @@ extern "C" {
 	 @pre drone_connect must have been previously called to establish a connection to the drone.
 	 **/
 	void drone_set_ultrasound_channel(int channel);
+
+	/**
+	 @brief Initializes the drone's onboard video detection
+	 @param channel A integer representing which channel to operate on 
+						0 == Turns the drones detection off
+						1 == Detects green enemies via the front camera
+						2 == Detects yellow enemies via the front camera
+						3 == Detects blue enemies via the front camera
+						4 == Detects orange/green ground stripes via the bottom camera
+						5 == Detects yellow/blue ground stripes via the bottom camera
+						6 == Detects roundels via the bottom camera
+	 @pre drone_connect must have been previously called to establish a connection to the drone.
+	 **/
+	void drone_set_detection(int detectType);
 	
 	
 #ifdef __cplusplus
