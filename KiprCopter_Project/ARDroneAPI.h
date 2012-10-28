@@ -161,6 +161,15 @@ extern "C" {
 	 @pre A roundel must have been detected in the drones vision tags
 	 **/
 	void drone_hover_on_roundel(int shouldHover);
+
+	/**
+	 @brief Switches the channel the drone's altitude meter operates on so that interferance does not occur between two drones
+	 @param channel A integer representing which channel to operate on 
+						1 == True turns the drone to channel A
+						0 == False turns the drone to channel B
+	 @pre drone_connect must have been previously called to establish a connection to the drone.
+	 **/
+	void drone_set_ultrasound_channel(int channel);
 	
 	
 #ifdef __cplusplus

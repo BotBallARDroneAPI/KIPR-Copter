@@ -3,6 +3,7 @@
 #include "DroneConstants.h"
 #include <commonc++/ScopedLock.h++>
 #include "compat.h"
+#include "ARDroneAPI.cpp"
 
 
 namespace ARDrone
@@ -70,13 +71,13 @@ namespace ARDrone
 						{
 							//CBC Function Call
 							//#TODO Uncomment the following line
-							//write_external_camera_data();
+							write_external_camera_data();
 						}
 						else
 						{
 							//CBC Function Call
 							//#TODO Uncomment the following line
-							//delete_external_camera_data();
+							delete_external_camera_data();
 						}
 
 						//ccxx::Thread::sleep(20);

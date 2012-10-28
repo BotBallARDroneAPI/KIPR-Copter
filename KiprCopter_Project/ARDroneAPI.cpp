@@ -35,11 +35,12 @@ float requested_yaw_vel = 0.0;
 float requested_z_vel = 0.0;
 int control_pid;
 
-void watchdog();
-void monitor_sensors();
+void watchdog(); //Process
+void monitor_sensors(); //Process
 void init_position_tracking();
 void update_position_tracking();
-void move_control_thread();
+void move_control_thread(); //Process
+
 void send_control_parameters(int enable, float x_tilt, float y_tilt, float yaw_vel, float z_vel);
 
 void set_drone_Mac_Address(char * macAddress)
@@ -80,7 +81,7 @@ void drone_connect()
 		myDrone = new Drone();
 		myDrone->start();
 		
-		watchdog_pid = start_process(watchdog);
+		//watchdog_pid = start_process(watchdog);
 		watchdog_enable = true;
 		
 		cached_battery = 0;
@@ -102,7 +103,7 @@ void drone_disconnect()
 		kill_process(sensors_pid);
 		
 		watchdog_enable = false;
-		kill_process(watchdog_pid);
+		//kill_process(watchdog_pid);
 		
 		myDrone->stop();
 		delete myDrone;
@@ -184,6 +185,10 @@ void update_position_tracking()
 	
 	float current_receive_time = myDrone->navigationDataReceiver().navTimestamp / 1000.0;
 	float current_time = seconds();
+
+	//check for watchdog flag
+	if(latest_data.flags.controlWatchdogDelayed)
+		myDrone->controller().sendWatchDog();
 	
 	
 	bool zero_vx = false;
@@ -404,6 +409,14 @@ void drone_hover_on_roundel(int shouldHover)
 	{
 		printf("Unsupported drone_hover_on_roundel parameter %i", shouldHover);
 	}
+}
+
+void drone_set_ultrasound_channel(int channel)
+{
+	if(channel)
+		myDrone->controller().setUltrasoundFrequency(CHANNEL_22_5MHZ);
+	else
+		myDrone->controller().setUltrasoundFrequency(CHANNEL_22MHZ);		
 }
 
 
