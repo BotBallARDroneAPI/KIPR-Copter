@@ -6,6 +6,9 @@
 #include "VideoDecoder.h"
 #include "commonc++/Thread.h++"
 
+
+#define buffersize 921600 //640x480x3 MAX out
+
 namespace ARDrone
 {
 	class VideoDataReceiver : public ccxx::Thread
@@ -15,7 +18,7 @@ namespace ARDrone
 		ccxx::Mutex myMutex;
 		std::string myDroneAddress;
 		ARDrone::Controller* myController;
-		unsigned char myVideoData[921600]; //640x480x3 MAX out
+		unsigned char myVideoData[buffersize];
 		unsigned int videoDataLength;
 		//Mod by Jeremy Rand
 		VideoDecoder::Image videoBuffer[2];
