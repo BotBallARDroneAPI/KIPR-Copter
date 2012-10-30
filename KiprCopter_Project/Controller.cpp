@@ -41,23 +41,28 @@ namespace ARDrone
 		disableAdaptiveVideo();
 		setUltrasoundFrequency(CHANNEL_22_5MHZ);
 		sendFlatTrim();
-		//printf("Completed Drone Connection\n");
 	}
-	void Controller::takeOff()
+	
+    
+    void Controller::takeOff()
 	{
-		//printf("Takeoff\n");
 		myCommunicationChannel.sendAT(ATSTATE_COMMAND.c_str(), TAKEOFF_ARG.c_str());
 	}
-	void Controller::land()
+	
+    
+    void Controller::land()
 	{
-		//printf("Landing\n");
 		myCommunicationChannel.sendAT(ATSTATE_COMMAND.c_str(), LAND_ARG.c_str());
 	}	
-	void Controller::hover()
+	
+    
+    void Controller::hover()
 	{
 		sendControlParameters(0, 0, 0, 0, 0);
 	}
-	void Controller::setFlyingMode(FlyMode mode)
+	
+    
+    void Controller::setFlyingMode(FlyMode mode)
 	{
 		switch(mode)
 		{
@@ -67,10 +72,11 @@ namespace ARDrone
 			case (HOVER_ON_ROUNDEL): //ARDrone doc has this enum = 1 << 0....
 				myCommunicationChannel.sendAT(ATCONFIG_COMMAND.c_str(), FLYING_MODE_HOVER_ON_ROUNDEL_ARG.c_str());
 				break;
-			//TODO If these both work remove the one above
 			case (HOVER_ON_ORIENTED_ROUNDEL): //ARDrone doc has this enum = 1 << 1....
 				myCommunicationChannel.sendAT(ATCONFIG_COMMAND.c_str(), FLYING_MODE_HOVER_ON_ORIENTED_ROUNDEL_ARG.c_str());
 				break;
+            default:
+                printf("FlyingMode was set to %d. Only 0, 1, or 2 are valid input");
 		}
 	}
 	void Controller::requestNavigationData(NavDataSize size)
