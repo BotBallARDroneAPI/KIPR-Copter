@@ -9,8 +9,30 @@
 			887AB1F1162CFF5000FAFDFE /* KiprCopter_Project */,
 		);
 		perUserDictionary = {
-			PBXPerProjectTemplateStateSaveDate = 372047696;
-			PBXWorkspaceStateSaveDate = 372047696;
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					341,
+					20,
+					48.16259765625,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 373258024;
+			PBXWorkspaceStateSaveDate = 373258024;
 		};
 		sourceControlManager = 887AB1F7162CFF6F00FAFDFE /* Source Control */;
 		userBuildSettings = {

@@ -41,16 +41,16 @@ namespace ARDrone
 		disableAdaptiveVideo();
 		setUltrasoundFrequency(CHANNEL_22_5MHZ);
 		sendFlatTrim();
-		printf("Completed Drone Connection\n");
+		//printf("Completed Drone Connection\n");
 	}
 	void Controller::takeOff()
 	{
-		printf("Takeoff\n");
+		//printf("Takeoff\n");
 		myCommunicationChannel.sendAT(ATSTATE_COMMAND.c_str(), TAKEOFF_ARG.c_str());
 	}
 	void Controller::land()
 	{
-		printf("Landing\n");
+		//printf("Landing\n");
 		myCommunicationChannel.sendAT(ATSTATE_COMMAND.c_str(), LAND_ARG.c_str());
 	}	
 	void Controller::hover()
