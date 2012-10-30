@@ -85,7 +85,6 @@ void drone_connect()
 		myDrone = new Drone();
 		myDrone->start();
 		
-		//watchdog_pid = start_process(watchdog);
 		watchdog_enable = true;
 		
 		cached_battery = 0;
@@ -107,7 +106,6 @@ void drone_disconnect()
 		kill_process(sensors_pid);
 		
 		watchdog_enable = false;
-		//kill_process(watchdog_pid);
 		
 		myDrone->stop();
 		delete myDrone;
@@ -155,10 +153,9 @@ int drone_get_battery()
 		
 		return cached_battery;
 	}
-	else
-	{
-		return 0;
-	}
+    
+    return 0;
+
 }
 
 void init_position_tracking()
