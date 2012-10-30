@@ -43,14 +43,6 @@ namespace ARDrone
 	{
 		if(isConnectedWithDrone())
 		{
-			/*
-			Jeremy Mod
-			char buffer[255];
-			sprintf(buffer, ",\"network:owner_mac\",\"%s\"", pairMAC);
-			
-			sendAT("AT*CONFIG=", buffer);
-			 */
-			//sendAT("AT*CONFIG=", ",\"network:owner_mac\",\"00:00:00:00:00:00\"");
 			myDatagram.shutdown();
 		}
 	}
