@@ -414,9 +414,9 @@ void drone_hover_on_roundel(int shouldHover)
 
 void drone_set_ultrasound_channel(int channel)
 {
-	if(channel)
+	if(channel == 1)
 		myDrone->controller().setUltrasoundFrequency(CHANNEL_22_5MHZ);
-	else
+	else if(channel == 2)
 		myDrone->controller().setUltrasoundFrequency(CHANNEL_22MHZ);		
 }
 

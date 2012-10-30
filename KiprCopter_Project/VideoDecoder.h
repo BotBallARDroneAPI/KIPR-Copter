@@ -3,13 +3,15 @@
 #include <cstring>
 #include <cstdio>
 
+#define buffersize 921600 //640x480x3 MAX out
+
 namespace ARDrone
 {
   namespace VideoDecoder
   {
     struct Image
     {
-      unsigned char data[921600]; //640x480x3 MAX out
+      unsigned char data[buffersize]; 
       int width;
       int height;
     };
