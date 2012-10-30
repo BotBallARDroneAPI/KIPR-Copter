@@ -210,24 +210,20 @@ void update_position_tracking()
 	
 	if(latest_data.speed.vx < 0.001 && latest_data.speed.vx > -0.001)
 	{
-		//printf("Zero vx\n");
 		zero_vx = true;
 	}
 	if(latest_data.speed.vy < 0.001 && latest_data.speed.vy > -0.001)
 	{
-		//printf("Zero vy\n");
 		zero_vy = true;
 	}
 	
 	if(latest_data.altitude < 0.001 && latest_data.altitude > -0.001)
 	{
-		//printf("Zero z\n");
 		zero_z = true;
 	}
 	
 	if(latest_data.orientation.yaw < 0.001 && latest_data.orientation.yaw > -0.001)
 	{
-		//printf("Zero z\n");
 		zero_yaw = true;
 	}
 	
@@ -235,11 +231,8 @@ void update_position_tracking()
 	if(! zero_vy || ! requested_enable_move) vy = -latest_data.speed.vy;
 	if(! zero_z)
 	{
-		//if(fabs(latest_data.altitude * 1000.0 - z)>0.001)
-		//{
 		vz = (latest_data.altitude * 1000.0 - z) * (current_receive_time - last_nav_receive) / 1000.0;
 		z = latest_data.altitude * 1000.0; // this returns mm
-		//}
 	}
 	else
 	{
@@ -302,11 +295,8 @@ void drone_down_camera()
 
 void enable_drone_vision()
 {
-	//printf("Writing initial camera data\n");
 	write_external_camera_data();
-	//printf("Enabling Drone vision\n");
 	myDrone->videoDataReceiver().setEnableCbcuiVision(true);
-	//printf("enable_drone_vision exit\n");
 }
 
 void disable_drone_vision()
@@ -418,7 +408,7 @@ void drone_hover_on_roundel(int shouldHover)
 		myDrone->controller().setFlyingMode(NORMAL);
 	else
 	{
-		printf("Unsupported drone_hover_on_roundel parameter %i", shouldHover);
+		printf("\n Hover Failed.\n Command recieved %i. Input of 0 or 1 is accepted", shouldHover);
 	}
 }
 
