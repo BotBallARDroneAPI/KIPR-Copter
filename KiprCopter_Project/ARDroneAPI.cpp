@@ -85,7 +85,6 @@ void drone_connect()
 		myDrone = new Drone();
 		myDrone->start();
 		
-		//watchdog_pid = start_process(watchdog);
 		watchdog_enable = true;
 		
 		cached_battery = 0;
@@ -107,7 +106,6 @@ void drone_disconnect()
 		kill_process(sensors_pid);
 		
 		watchdog_enable = false;
-		//kill_process(watchdog_pid);
 		
 		myDrone->stop();
 		delete myDrone;
@@ -155,10 +153,9 @@ int drone_get_battery()
 		
 		return cached_battery;
 	}
-	else
-	{
-		return 0;
-	}
+    
+    return 0;
+
 }
 
 void init_position_tracking()
@@ -213,24 +210,20 @@ void update_position_tracking()
 	
 	if(latest_data.speed.vx < 0.001 && latest_data.speed.vx > -0.001)
 	{
-		//printf("Zero vx\n");
 		zero_vx = true;
 	}
 	if(latest_data.speed.vy < 0.001 && latest_data.speed.vy > -0.001)
 	{
-		//printf("Zero vy\n");
 		zero_vy = true;
 	}
 	
 	if(latest_data.altitude < 0.001 && latest_data.altitude > -0.001)
 	{
-		//printf("Zero z\n");
 		zero_z = true;
 	}
 	
 	if(latest_data.orientation.yaw < 0.001 && latest_data.orientation.yaw > -0.001)
 	{
-		//printf("Zero z\n");
 		zero_yaw = true;
 	}
 	
@@ -238,11 +231,8 @@ void update_position_tracking()
 	if(! zero_vy || ! requested_enable_move) vy = -latest_data.speed.vy;
 	if(! zero_z)
 	{
-		//if(fabs(latest_data.altitude * 1000.0 - z)>0.001)
-		//{
 		vz = (latest_data.altitude * 1000.0 - z) * (current_receive_time - last_nav_receive) / 1000.0;
 		z = latest_data.altitude * 1000.0; // this returns mm
-		//}
 	}
 	else
 	{
@@ -305,11 +295,8 @@ void drone_down_camera()
 
 void enable_drone_vision()
 {
-	//printf("Writing initial camera data\n");
 	write_external_camera_data();
-	//printf("Enabling Drone vision\n");
 	myDrone->videoDataReceiver().setEnableCbcuiVision(true);
-	//printf("enable_drone_vision exit\n");
 }
 
 void disable_drone_vision()
@@ -421,15 +408,15 @@ void drone_hover_on_roundel(int shouldHover)
 		myDrone->controller().setFlyingMode(NORMAL);
 	else
 	{
-		printf("Unsupported drone_hover_on_roundel parameter %i", shouldHover);
+		printf("\n Hover Failed.\n Command recieved %i. Input of 0 or 1 is accepted", shouldHover);
 	}
 }
 
 void drone_set_ultrasound_channel(int channel)
 {
-	if(channel)
+	if(channel == 1)
 		myDrone->controller().setUltrasoundFrequency(CHANNEL_22_5MHZ);
-	else
+	else if(channel == 2)
 		myDrone->controller().setUltrasoundFrequency(CHANNEL_22MHZ);		
 }
 
