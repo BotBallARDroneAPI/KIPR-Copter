@@ -9,9 +9,6 @@
 #include <math.h>
 #include <fcntl.h>
 
-#define EXTERNAL_CAMERA_BUFFER "/tmp/external_camera_buffer"
-#define EXTERNAL_CAMERA_READY "/tmp/external_camera_ready"
-
 using namespace ARDrone;
 using namespace std;
 
@@ -39,7 +36,6 @@ int control_pid;
 
 std::vector<VisionTag> visionTagVector;
 
-void watchdog(); //Process....Deprecated
 void monitor_sensors(); //Process
 void init_position_tracking();
 void update_position_tracking();
@@ -55,22 +51,9 @@ void set_drone_Mac_Address(char * macAddress)
 	}
 }
 
-void watchdog()
-{
-	while(1)
-	{
-		if(watchdog_enable)
-		{
-			myDrone->controller().sendWatchDog();
-		}
-		
-		msleep(50);
-	}
-}
-
 void monitor_sensors()
 {
-	while(1)
+	while(true)
 	{
 		drone_get_battery();
 		update_position_tracking();
@@ -184,13 +167,9 @@ void update_position_tracking()
 	
 	myDrone->navigationDataReceiver().copyDataTo(latest_data);
 	
-	float current_receive_time = myDrone->navigationDataReceiver().navTimestamp / 1000.0;
+	float current_receive_time = myDrone->navigationDataReceiver().navTimestamp * TIMESTAMP_PER_SECOND;
 	float current_time = seconds();
 
-	//check for watchdog flag
-	if(latest_data.flags.controlWatchdogDelayed)
-		myDrone->controller().sendWatchDog();
-	
 	//copy vision tag vector
 	visionTagVector = latest_data.visionTagVector;
 
@@ -198,7 +177,7 @@ void update_position_tracking()
 	//for testing.... output visionTagVector types
 	for(int i = 0; i < visionTagVector.size(); i++)
 	{
-		printf("Index: %d, Type: %d\n", i, visitionTagVector.at(i).type);
+		printf("Index: %d, Type: %d\n", i, visionTagVector.at(i).type);
 	}
 
 
@@ -208,21 +187,21 @@ void update_position_tracking()
 	bool zero_yaw = false;
 	
 	
-	if(latest_data.speed.vx < 0.001 && latest_data.speed.vx > -0.001)
+	if(latest_data.speed.vx < DRIFT_TOLERANCE && latest_data.speed.vx > -DRIFT_TOLERANCE)
 	{
 		zero_vx = true;
 	}
-	if(latest_data.speed.vy < 0.001 && latest_data.speed.vy > -0.001)
+	if(latest_data.speed.vy < DRIFT_TOLERANCE && latest_data.speed.vy > -DRIFT_TOLERANCE)
 	{
 		zero_vy = true;
 	}
 	
-	if(latest_data.altitude < 0.001 && latest_data.altitude > -0.001)
+	if(latest_data.altitude < DRIFT_TOLERANCE && latest_data.altitude > -DRIFT_TOLERANCE)
 	{
 		zero_z = true;
 	}
 	
-	if(latest_data.orientation.yaw < 0.001 && latest_data.orientation.yaw > -0.001)
+	if(latest_data.orientation.yaw < DRIFT_TOLERANCE && latest_data.orientation.yaw > -DRIFT_TOLERANCE)
 	{
 		zero_yaw = true;
 	}
@@ -231,8 +210,8 @@ void update_position_tracking()
 	if(! zero_vy || ! requested_enable_move) vy = -latest_data.speed.vy;
 	if(! zero_z)
 	{
-		vz = (latest_data.altitude * 1000.0 - z) * (current_receive_time - last_nav_receive) / 1000.0;
-		z = latest_data.altitude * 1000.0; // this returns mm
+		vz = (latest_data.altitude * MILIMETERS_PER_METER - z) * (current_receive_time - last_nav_receive) * TIMESTAMP_PER_SECOND;
+		z = latest_data.altitude * MILIMETERS_PER_METER; // this returns mm
 	}
 	else
 	{
@@ -240,7 +219,7 @@ void update_position_tracking()
 	}
 	
 	x += vx * (current_time-last_nav_calc);
-	y += (vy /* * 7.3 / 1.256 */ ) * (current_time-last_nav_calc);
+	y += (vy ) * (current_time-last_nav_calc);
 	
 	if(! zero_yaw) yaw = -latest_data.orientation.yaw; // this returns deg
 	
@@ -295,99 +274,28 @@ void drone_down_camera()
 
 void enable_drone_vision()
 {
-	write_external_camera_data();
+	myDrone->videoDataReceiver().write_external_camera_data();
 	myDrone->videoDataReceiver().setEnableCbcuiVision(true);
 }
 
 void disable_drone_vision()
 {
 	myDrone->videoDataReceiver().setEnableCbcuiVision(false);
-	delete_external_camera_data();
-}
-
-void write_external_camera_data()
-{
-	//printf("write_external_camera_data enter\n");
-	// If Ready Flag is not present, or if buffer is not present
-	if( ! (access(EXTERNAL_CAMERA_READY, F_OK) != -1) || ! (access(EXTERNAL_CAMERA_BUFFER, F_OK) != -1) )
-	{
-		VideoDecoder::Image * videoData = new VideoDecoder::Image();
-		long timestamp;
-		
-		int srcw, srch, destw, desth;
-		int x, y, srcx, srcy;
-		int src_index;
-		
-		int buffer_file;
-		int ready_file;
-		
-		//printf("Image created\n");
-		
-		myDrone->videoDataReceiver().copyDataTo(*videoData, timestamp);
-		
-		//printf("Copied data\n");
-		
-		//printf("Dimensions: %d by %d\n", videoData->width, videoData->height);
-		
-		srcw = videoData->width;
-		srch = videoData->height;
-		
-		destw = 160;
-		desth = 120;
-		
-		buffer_file = open(EXTERNAL_CAMERA_BUFFER, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-		
-		//printf("Opened buffer, %d\n", buffer_file);	
-		
-		for(y=0; y<desth; y++)
-		{
-			srcy = y * srch / desth;
-			
-			for(x=0; x<destw; x++)
-			{
-				srcx = x * srcw / destw;
-				src_index = ((srcy*srcw)+srcx)*3;
-				
-				write(buffer_file, videoData->data + src_index+2, 1); // B
-				write(buffer_file, videoData->data + src_index+1, 1); // G
-				write(buffer_file, videoData->data + src_index+0, 1); // R
-			}
-		}
-		
-		close(buffer_file);
-		
-		//printf("Closed buffer\n");
-		
-		delete videoData;
-		
-		//printf("Writing ready flag\n");
-		
-		ready_file = open(EXTERNAL_CAMERA_READY, O_WRONLY | O_CREAT, 0666);
-		close(ready_file);
-		
-		//printf("ready_file %d\n", ready_file);
-	}
-	
-	//printf("write_external_camera_data exit\n");	
-}
-
-void delete_external_camera_data()
-{
-	remove(EXTERNAL_CAMERA_BUFFER);
-	remove(EXTERNAL_CAMERA_READY);
+	myDrone->videoDataReceiver().delete_external_camera_data();
 }
 
 void move_control_thread()
 {
-	while(1)
+	while(true)
 	{
 		myDrone->controller().sendControlParameters(requested_enable_move, requested_x_tilt, requested_y_tilt, requested_yaw_vel, requested_z_vel);
+		myDrone->controller().sendWatchDog();//ensures the drone doesn't lose connection
 		msleep(5);
 	}
 }
 void drone_move(float x_tilt, float y_tilt, float yaw_vel, float z_vel)
 {
-	requested_enable_move = 1;
+	requested_enable_move = true;
 	requested_x_tilt = x_tilt;
 	requested_y_tilt = y_tilt;
 	requested_yaw_vel = yaw_vel;
@@ -396,15 +304,15 @@ void drone_move(float x_tilt, float y_tilt, float yaw_vel, float z_vel)
 
 void drone_hover()
 {
-	requested_enable_move = 0;
+	requested_enable_move = false;
 }
 
 
 void drone_hover_on_roundel(int shouldHover)
 {
-	if(shouldHover == 1)
+	if(shouldHover == 0)
 		myDrone->controller().setFlyingMode(HOVER_ON_ORIENTED_ROUNDEL);
-	else if(shouldHover == 0)
+	else if(shouldHover == 1)
 		myDrone->controller().setFlyingMode(NORMAL);
 	else
 	{
@@ -414,7 +322,7 @@ void drone_hover_on_roundel(int shouldHover)
 
 void drone_set_ultrasound_channel(int channel)
 {
-	if(channel == 1)
+	if(channel == CHANNEL_22_5MHZ)
 		myDrone->controller().setUltrasoundFrequency(CHANNEL_22_5MHZ);
 	else if(channel == 2)
 		myDrone->controller().setUltrasoundFrequency(CHANNEL_22MHZ);		
@@ -423,27 +331,27 @@ void drone_set_ultrasound_channel(int channel)
 
 void drone_set_detection(int detectType)
 {
-	switch detectType
+	switch (detectType)
 	{
-		case 0:
+		case NONE:
 			myDrone->controller().disableDroneTagging();
 			break;
-		case 1:
+		case GREEN:
 			myDrone->controller().detectColor(GREEN);
 			break;
-		case 2:
-			myDrone->controller()..detectColor(YELLOW);
+		case YELLOW:
+			myDrone->controller().detectColor(YELLOW);
 			break;
-		case 3:
-			myDrone->controller()..detectColor(BLUE);
+		case BLUE:
+			myDrone->controller().detectColor(BLUE);
 			break;
-		case 4:
+		case ORANGE_GREEN:
 			myDrone->controller().detectGroundStripe(ORANGE_GREEN);
 			break;
-		case 5:
+		case YELLOW_BLUE:
 			myDrone->controller().detectGroundStripe(YELLOW_BLUE);
 			break;
-		case 6:
+		case ROUNDEL:
 			myDrone->controller().detectRoundel_BW();
 			break;
 	}

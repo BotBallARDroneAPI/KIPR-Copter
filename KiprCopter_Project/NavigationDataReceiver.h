@@ -65,6 +65,7 @@ namespace ARDrone
 	 @param data A reference to a Navigation Data object that will be filled with the data stored in the myNavData member
 	 **/
     void copyDataTo(ARDrone::NavigationData& data);
+	  
   protected:
 	/**
 	@brief Runs the NavDataReceiver thread to establish a connection to the Drone to receive Navigation Data

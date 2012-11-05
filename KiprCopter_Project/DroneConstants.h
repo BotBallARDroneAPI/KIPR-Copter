@@ -82,6 +82,10 @@ const std::string FLYING_MODE_HOVER_ON_ORIENTED_ROUNDEL_ARG = ",\"control:flying
 
 const std::string VIDEO_CONTROL_MODE_DISABLE_ARG = ",\"video:bitrate_ctrl_mode\",\"0\"";
 
+// ARDroneAPI Constants
+const float DRIFT_TOLERANCE = 0.001;
+const float TIMESTAMP_PER_SECOND = float(1)/float(1000);
+const int MILIMETERS_PER_METER = 1000;
 
 //VideoDecoder
 const int kPictureFormatCIF = 1;
