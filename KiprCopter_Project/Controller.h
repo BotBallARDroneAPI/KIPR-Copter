@@ -20,13 +20,17 @@ namespace ARDrone
 	};
 	
 	/** 
-	 @brief An Enum to provide a textual parameter to feed into the detectColor Command
+	 @brief An Enum to provide a textual parameter for tag detection Command
 	 **/
-	enum EnemyColor
+	enum DetectedTag
 	{
+		NONE = 0,
 		GREEN = 1,
 		YELLOW = 2,
-		BLUE = 3
+		BLUE = 3,
+		ORANGE_GREEN = 4,
+		YELLOW_BLUE = 5, 
+		ROUNDEL = 6
 	};
 	
 	/**
@@ -37,15 +41,6 @@ namespace ARDrone
 		BEGINNER = 1,
 		ACE = 2,
 		MAX = 3
-	};
-	
-	/** 
-	 @brief An Enum to provide a textual parameter to feed into the detectGroundStripe Command
-	 **/
-	enum GroundStripeColor
-	{
-		ORANGE_GREEN = 1,
-		YELLOW_BLUE = 2
 	};
 	
 	/** 
@@ -237,13 +232,13 @@ namespace ARDrone
 			@brief Detects "Enemy" colors on the forward facing camera
 			@param detect_color The color that we would like to find
 			**/
-			void detectColor(EnemyColor detect_color);
+			void detectColor(DetectedTag detect_color);
 
 			/**
 			@brief Detects Ground Stripe tags on the ground facing camera
 			@param detect_color The color that we would like to find
 			**/
-			void detectGroundStripe(GroundStripeColor detect_color);
+			void detectGroundStripe(DetectedTag detect_color);
 			/**
 			@brief Detects Roundels on the ground facing camera
 			**/

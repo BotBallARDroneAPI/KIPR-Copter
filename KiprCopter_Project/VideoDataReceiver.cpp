@@ -3,8 +3,10 @@
 #include "DroneConstants.h"
 #include <commonc++/ScopedLock.h++>
 #include "compat.h"
-#include "ARDroneAPI.cpp"
+#include <fcntl.h>
 
+#define EXTERNAL_CAMERA_BUFFER "/tmp/external_camera_buffer"
+#define EXTERNAL_CAMERA_READY "/tmp/external_camera_ready"
 
 namespace ARDrone
 {
@@ -12,15 +14,10 @@ namespace ARDrone
 	{
 		myDroneAddress = szDroneIpAddress;
 		myController = pController;
-		
-
-		 // Mod by Jeremy Rand
-		 safeBufferIndex = 1;
-		 videoBuffer[0].height = videoBuffer[0].width = videoBuffer[1].height = videoBuffer[1].width = 0;
-		 videoTimestamp[0] = videoTimestamp[1] = 0;
-		 enableCbcuiVision = false;
-		//End Mod
-
+		safeBufferIndex = 1;
+		videoBuffer[0].height = videoBuffer[0].width = videoBuffer[1].height = videoBuffer[1].width = 0;
+		videoTimestamp[0] = videoTimestamp[1] = 0;
+		enableCbcuiVision = false;
 	}
 	
 	VideoDataReceiver::~VideoDataReceiver() throw ()
@@ -70,22 +67,15 @@ namespace ARDrone
 						if(enableCbcuiVision)
 						{
 							//CBC Function Call
-							//#TODO Uncomment the following line
 							write_external_camera_data();
 						}
 						else
 						{
 							//CBC Function Call
-							//#TODO Uncomment the following line
 							delete_external_camera_data();
 						}
 
-						//ccxx::Thread::sleep(20);
 						msleep(20);
-						// End Mod
-
-						//::printf("vd length--> %d\n", videoDataLength);
-						//::Thread::sleep(20);
 					}
 				}
 				catch (ccxx::TimeoutException& timeoutEx) 
@@ -111,11 +101,64 @@ namespace ARDrone
 		synchronized(myMutex)
 		{
 			ARDrone::VideoDecoder::decodeImage(myVideoData, videoDataLength, resultImage);
-			//::printf("%d, %d\n", resultImage.width, resultImage.height);
 		}
 	}
 	
-// Jeremy Rand Mod
+	void VideoDataReceiver::write_external_camera_data()
+	{
+		// If Ready Flag is not present, or if buffer is not present
+		if( ! (access(EXTERNAL_CAMERA_READY, F_OK) != -1) || ! (access(EXTERNAL_CAMERA_BUFFER, F_OK) != -1) )
+		{
+			VideoDecoder::Image * videoData = new VideoDecoder::Image();
+			long timestamp;
+			
+			int srcw, srch, destw, desth;
+			int x, y, srcx, srcy;
+			int src_index;
+			
+			int buffer_file;
+			int ready_file;
+			
+			copyDataTo(*videoData, timestamp);
+			
+			srcw = videoData->width;
+			srch = videoData->height;
+			
+			destw = 160;
+			desth = 120;
+			
+			buffer_file = open(EXTERNAL_CAMERA_BUFFER, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+			
+			for(y=0; y<desth; y++)
+			{
+				srcy = y * srch / desth;
+				
+				for(x=0; x<destw; x++)
+				{
+					srcx = x * srcw / destw;
+					src_index = ((srcy*srcw)+srcx)*3;
+					
+					write(buffer_file, videoData->data + src_index+2, 1); // B
+					write(buffer_file, videoData->data + src_index+1, 1); // G
+					write(buffer_file, videoData->data + src_index+0, 1); // R
+				}
+			}
+			
+			close(buffer_file);
+			
+			delete videoData;
+			
+			ready_file = open(EXTERNAL_CAMERA_READY, O_WRONLY | O_CREAT, 0666);
+			close(ready_file);
+			
+		}
+	}
+	void VideoDataReceiver::delete_external_camera_data()
+	{
+		remove(EXTERNAL_CAMERA_BUFFER);
+		remove(EXTERNAL_CAMERA_READY);
+	}
+	
 	void VideoDataReceiver::copyDataTo(ARDrone::VideoDecoder::Image& resultImage, long& timestamp)
 	{		
 		if(safeBufferIndex == 0 || safeBufferIndex == 1)

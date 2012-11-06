@@ -11,7 +11,6 @@ namespace ARDrone
 		myDroneAddress = szDroneIpAddress;
 		myController = pController;
 		
-		//Jeremy Rand Mod
 		navTimestamp = 0;
 	}
 	
@@ -35,7 +34,6 @@ namespace ARDrone
 	{
 		synchronized(myMutex)
 		{
-			//::memcpy(&data, &myNavData, sizeof(ARDrone::NavigationData));
 			data = myNavData;
 		}
 	}

@@ -1,6 +1,7 @@
 // ARDroneAPI.h
 #ifndef ARDRONEAPI_H
 #define ARDRONEAPI_H
+#include "Controller.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -121,14 +122,7 @@ extern "C" {
 	 @pre drone_connect must have been previously called to establish a connection to the drone.
 	 **/
 	void disable_drone_vision();
-	/** 
-	 @brief Sends the vision data to the CBC's vision library for vision tracking
-	 **/
-	void write_external_camera_data();
-	/**
-	 @brief Deletes the vision data from the CBC'c vision library to stop vision tracking
-	 **/
-	void delete_external_camera_data();
+
 	/**
 	 @brief Sets the Drone's Mac Address Pair to be the given string
 	 @param macAddress A string representing the Mac Address of your CBC
