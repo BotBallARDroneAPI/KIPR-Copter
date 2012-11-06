@@ -1,0 +1,88 @@
+// !$*UTF8*$!
+{
+	08FB7793FE84155DC02AAC07 /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeExecutable = 887AB1F1162CFF5000FAFDFE /* KiprCopter_Project */;
+		activeTarget = 8DD76F620486A84900D96B5E /* KiprCopter_Project */;
+		codeSenseManager = 887AB1F8162CFF6F00FAFDFE /* Code sense */;
+		executables = (
+			887AB1F1162CFF5000FAFDFE /* KiprCopter_Project */,
+		);
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					341,
+					20,
+					48.16259765625,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 373258024;
+			PBXWorkspaceStateSaveDate = 373258024;
+		};
+		sourceControlManager = 887AB1F7162CFF6F00FAFDFE /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	887AB1F1162CFF5000FAFDFE /* KiprCopter_Project */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = KiprCopter_Project;
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+	};
+	887AB1F7162CFF6F00FAFDFE /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
+		};
+	};
+	887AB1F8162CFF6F00FAFDFE /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	8DD76F620486A84900D96B5E /* KiprCopter_Project */ = {
+		activeExec = 0;
+		executables = (
+			887AB1F1162CFF5000FAFDFE /* KiprCopter_Project */,
+		);
+	};
+}
