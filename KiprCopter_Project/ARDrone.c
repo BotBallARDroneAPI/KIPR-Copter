@@ -1,5 +1,3 @@
-
-#include <jni.h>
 #include "ARDrone.h"
 #include "ARDroneAPI.h"
 
@@ -107,7 +105,7 @@ JNIEXPORT jfloat JNICALL Java_Drone_get_1x_1velocity(JNIEnv * env, jobject obj){
  * Method:    get_y_velocity
  * Signature: ()F
  */
-JNIEXPORT jfloat JNICALL Java_Drone_get_1y_1velocity(JNIEnv *, jobject){
+JNIEXPORT jfloat JNICALL Java_Drone_get_1y_1velocity(JNIEnv * env, jobject obj){
     jfloat returnme =  drone_get_y_velocity();
     return returnme;
 }

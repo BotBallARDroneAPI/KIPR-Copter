@@ -30,5 +30,8 @@ public class ARDrone{
 	static
 	{
 			System.loadLibrary("ARDrone");
+			//System.load("/mnt/kiss/jvm/cbc/libARDrone.so");
+			//System.load("/mnt/browser/usb/libARDrone.so");
+			//System.load("\\media\\TURLEYFLASH\\javaapi_new\\KIPR-Copter\\KiprCopter_Project\\libARDrone.so");
 	}
 };
