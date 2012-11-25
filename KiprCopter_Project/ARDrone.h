@@ -193,6 +193,14 @@ JNIEXPORT void JNICALL Java_ARDrone_hover_1on_1roundel
 
 /*
  * Class:     ARDrone
+ * Method:    set_ultrasound_channel
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_ARDrone_set_1ultrasound_1channel
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     ARDrone
  * Method:    set_detection
  * Signature: (I)V
  */

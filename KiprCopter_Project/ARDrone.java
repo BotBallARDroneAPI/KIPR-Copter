@@ -25,6 +25,7 @@ public class ARDrone{
 	public native void  move(float x_tilt, float y_tilt, float yaw_vel, float z_vel);
 	public native void  hover();
 	public native void  hover_on_roundel(boolean enable);
+	public native void  set_ultrasound_channel(int channel);
 	public native void  set_detection(int detectType);
 	
 	static

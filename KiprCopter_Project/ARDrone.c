@@ -1,5 +1,4 @@
 
-#include <jni.h>
 #include "ARDrone.h"
 #include "ARDroneAPI.h"
 
@@ -192,17 +191,13 @@ JNIEXPORT void JNICALL Java_Drone_delete_1external_1camera_1data(JNIEnv * env, j
  * Signature: (Ljava/lang/String;)V
  */
 JNIEXPORT void JNICALL Java_Drone_set_1drone_1Mac_1Address(JNIEnv * env, jobject obj, jstring str){
-    
     // TODO: Make set mac address function
-
-
 /*
     jboolean iscopy;
     const char *nativeString = (*env)->GetStringUTFChars(env, str, iscopy);
     set_drone_Mac_Address(nativeString);
     (*env)->ReleaseStringUTFChars(env, str, nativeString);
 */
-    
 }
 
 /*
@@ -238,6 +233,17 @@ JNIEXPORT void JNICALL Java_Drone_hover_1on_1roundel
     
     drone_hover_on_roundel(boo);
 }
+
+/*
+ * Class:     ARDrone
+ * Method:    set_ultrasound_channel
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_ARDrone_set_1ultrasound_1channel
+(JNIEnv * env, jobject obj, jint num){
+	drone_set_ultrasound(num);
+}
+
 
 /*
  * Class:     ARDrone
