@@ -241,7 +241,7 @@ JNIEXPORT void JNICALL Java_Drone_hover_1on_1roundel
  */
 JNIEXPORT void JNICALL Java_ARDrone_set_1ultrasound_1channel
 (JNIEnv * env, jobject obj, jint num){
-	drone_set_ultrasound(num);
+	drone_set_ultrasound_channel(num);
 }
 
 
