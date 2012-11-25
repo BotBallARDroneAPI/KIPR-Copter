@@ -29,6 +29,6 @@ public class ARDrone{
 	
 	static
 	{
-			System.loadLibrary("ARDrone");
+			System.load("/mnt/kiss/jvm/cbc/ARDrone.so");
 	}
 };
