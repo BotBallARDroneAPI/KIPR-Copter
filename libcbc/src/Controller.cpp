@@ -113,6 +113,12 @@ namespace ARDrone
 		
 		myCommunicationChannel.sendAT(ATMOVE_COMMAND.c_str(), strStm.str().c_str());
 	}
+	void Controller::sendAnimationControl(AnimationCmd myAnim)
+	{
+		std::stringstream strStm;
+		strStm << ANIMATION_CONTROL_ARG.c_str() << "\"" << myAnim << ",\"" << 50 << "\""; 
+		myCommunicationChannel.sandAT(ATCONFIG_COMMAND.c_str(), strStm.str().c_str());
+	}
 	void Controller::sendWatchDog()
 	{
 		myCommunicationChannel.sendAT(ATWATCHDOG_COMMAND.c_str(), "");

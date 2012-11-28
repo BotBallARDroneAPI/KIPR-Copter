@@ -45,12 +45,10 @@ namespace ARDrone
 	}
 	void Controller::takeOff()
 	{
-		//printf("Takeoff\n");
 		myCommunicationChannel.sendAT(ATSTATE_COMMAND.c_str(), TAKEOFF_ARG.c_str());
 	}
 	void Controller::land()
 	{
-		//printf("Landing\n");
 		myCommunicationChannel.sendAT(ATSTATE_COMMAND.c_str(), LAND_ARG.c_str());
 	}	
 	void Controller::hover()
@@ -114,6 +112,12 @@ namespace ARDrone
 		<< floatToIntegerByteByByte(yaw);
 		
 		myCommunicationChannel.sendAT(ATMOVE_COMMAND.c_str(), strStm.str().c_str());
+	}
+	void Controller::sendAnimationControl(AnimationCmd myAnim)
+	{
+		std::stringstream strStm;
+		strStm << ANIMATION_CONTROL_ARG.c_str() << "\"" << myAnim << ",\"" << 50 << "\""; 
+		myCommunicationChannel.sandAT(ATCONFIG_COMMAND.c_str(), strStm.str().c_str());
 	}
 	void Controller::sendWatchDog()
 	{
@@ -186,7 +190,7 @@ namespace ARDrone
 		strStm<< CONTROL_LEVEL << controlLevel << "\"";
 		myCommunicationChannel.sendAT(ATCONFIG_COMMAND.c_str(), strStm.str().c_str());
 	}
-	void Controller::detectColor(EnemyColor detect_color)
+	void Controller::detectColor(DetectedTag detect_color)
 	{
 		myCommunicationChannel.sendAT(ATCONFIG_COMMAND.c_str(), DETECT_TYPE_ENEMIES_FRONT_CAMERA_ARG.c_str()); //13 equates to CAD_TYPE_VISION_V2 from ardrone_api.h
 		
@@ -203,7 +207,7 @@ namespace ARDrone
 				break;
 		}
 	}
-	void Controller::detectGroundStripe(GroundStripeColor detect_color)
+	void Controller::detectGroundStripe(DetectedTag detect_color)
 	{
 		
 		myCommunicationChannel.sendAT(ATCONFIG_COMMAND.c_str(), DETECT_TYPE_STRIPE_ARG.c_str()); //6 equates to CAD_TYPE_STRIPE from ardrone_api.h

@@ -1,7 +1,6 @@
 // ARDroneAPI.h
 #ifndef ARDRONEAPI_H
 #define ARDRONEAPI_H
-#include "Controller.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -13,12 +13,23 @@ using namespace ARDrone;
 using namespace std;
 
 
+#define	LOCKED 1
+#define UNLOCKED 0
+
+enum movement_types{
+	MOVEMENT = 0,
+	ANIMATION = 1
+};
 
 Drone * myDrone;
 bool drone_connected = false;
 
 bool watchdog_enable = false;
 int watchdog_pid;
+
+int move_type = MOVEMENT;
+int anim_type = 0;
+int locker = UNLOCKED;
 
 int cached_battery = 0;
 float x,y,z,yaw;
@@ -286,11 +297,40 @@ void disable_drone_vision()
 
 void move_control_thread()
 {
+	int request;
+	int anim_request;
 	while(true)
 	{
-		myDrone->controller().sendControlParameters(requested_enable_move, requested_x_tilt, requested_y_tilt, requested_yaw_vel, requested_z_vel);
-		myDrone->controller().sendWatchDog();//ensures the drone doesn't lose connection
-		msleep(5);
+		while(locker==LOCKED) {}
+		locker = LOCKED;
+		request = move_type;
+		anim_request = anim_type;
+		locker = UNLOCKED;
+
+		switch(request)
+		{
+			case MOVEMENT:
+			{
+				myDrone->controller().sendControlParameters(requested_enable_move, requested_x_tilt, requested_y_tilt, requested_yaw_vel, requested_z_vel);
+				myDrone->controller().sendWatchDog();//ensures the drone doesn't lose connection
+				msleep(5);
+				break;
+			}
+			case ANIMATION:
+			{
+				myDrone->controller().sendAnimationControl(anim_request);
+				myDrone->controller().sendWatchDog();//ensures the drone doesn't lose connection
+				msleep(5);
+				break;
+			}
+			default:
+			{
+				myDrone->controller().sendWatchDog();//ensures the drone doesn't lose connection
+				break;
+			}
+		}	
+
+		
 	}
 }
 void drone_move(float x_tilt, float y_tilt, float yaw_vel, float z_vel)
@@ -355,5 +395,16 @@ void drone_set_detection(int detectType)
 			myDrone->controller().detectRoundel_BW();
 			break;
 	}
+}
+
+void drone_animation(int animationType, int tInterval)
+{
+	while(locker==LOCKED) {}
+	locker = LOCKED;
+	move_type = MOVEMENT;
+	anim_type = animationType;
+	locker = UNLOCKED;
+
+	msleep(tInterval);
 }
 

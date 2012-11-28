@@ -166,7 +166,7 @@ extern "C" {
 
 	/**
 	 @brief Initializes the drone's onboard video detection
-	 @param channel A integer representing which channel to operate on 
+	 @param detectType specifies the drone's detection mode 
 						0 == Turns the drones detection off
 						1 == Detects green enemies via the front camera
 						2 == Detects yellow enemies via the front camera
@@ -177,6 +177,30 @@ extern "C" {
 	 @pre drone_connect must have been previously called to establish a connection to the drone.
 	 **/
 	void drone_set_detection(int detectType);
+
+	/**
+	 @brief Commands the drone to perform predetermined animations, ignoring movement commands
+	 @param animationType specifies the animation to be performed
+						ARDRONE_ANIM_PHI_M30_DEG= 0,
+						ARDRONE_ANIM_PHI_30_DEG = 1,
+						ARDRONE_ANIM_THETA_M30_DEG = 2,
+						ARDRONE_ANIM_THETA_30_DEG = 3,
+						ARDRONE_ANIM_THETA_20DEG_YAW_200DEG = 4,
+						ARDRONE_ANIM_THETA_20DEG_YAW_M200DEG = 5,
+						ARDRONE_ANIM_TURNAROUND = 6,
+						ARDRONE_ANIM_TURNAROUND_GODOWN = 7,
+						ARDRONE_ANIM_YAW_SHAKE = 8,
+						ARDRONE_ANIM_YAW_DANCE = 9,
+						ARDRONE_ANIM_PHI_DANCE = 10,
+						ARDRONE_ANIM_THETA_DANCE = 11,
+						ARDRONE_ANIM_VZ_DANCE = 12,
+						ARDRONE_ANIM_WAVE = 13,
+						ARDRONE_ANIM_PHI_THETA_MIXED = 14,
+						ARDRONE_ANIM_DOUBLE_PHI_THETA_MIXED = 15
+	 @param tInterval specifies the duration of the animation in milliseconds
+	 @pre drone_connect must have been previously called to establish a connection to the drone.
+	 **/
+	void drone_animation(int animationType, int tInterval);
 	
 	
 #ifdef __cplusplus
