@@ -1,0 +1,132 @@
+/// VideoDataReceiver.cpp
+#include "VideoDataReceiver.h"
+#include "DroneConstants.h"
+#include <commonc++/ScopedLock.h++>
+#include "compat.h"
+
+
+namespace ARDrone
+{
+	VideoDataReceiver::VideoDataReceiver(ARDrone::Controller* pController, const char* szDroneIpAddress)
+	{
+		myDroneAddress = szDroneIpAddress;
+		myController = pController;
+		
+
+		 // Mod by Jeremy Rand
+		 safeBufferIndex = 1;
+		 videoBuffer[0].height = videoBuffer[0].width = videoBuffer[1].height = videoBuffer[1].width = 0;
+		 videoTimestamp[0] = videoTimestamp[1] = 0;
+		 enableCbcuiVision = false;
+		//End Mod
+
+	}
+	
+	VideoDataReceiver::~VideoDataReceiver() throw ()
+	{
+		if(true == isRunning())
+		{
+			try
+			{
+				stop();
+				join();
+				myCommunicationChannel.disconnectFromDrone();
+			}
+			catch (ccxx::Exception& ex) 
+			{
+				std::cout << ex.what() << std::endl;
+			}
+		}
+	}
+	
+	void VideoDataReceiver::run()
+	{
+		std::cout << "VideoDataReceiver started\n";
+		try 
+		{
+			myCommunicationChannel.connectWithDroneAtAddress(myDroneAddress.c_str(), VIDEO_DATA_PORT);
+			myCommunicationChannel.setTimeout(3000);
+			myController->disableAdaptiveVideo();
+			unsigned char trigger[4] = {0x01, 0x00, 0x00, 0x00};
+			myCommunicationChannel.send(trigger, 4);
+			
+			myController->requestVideoData();
+			while(false == testCancel())
+			{
+				try 
+				{
+					
+					synchronized(myMutex)
+					{
+						videoDataLength = 921600;
+						myCommunicationChannel.receive(myVideoData, videoDataLength);
+
+						// Mod by Jeremy
+						ARDrone::VideoDecoder::decodeImage(myVideoData, videoDataLength, videoBuffer[safeBufferIndex^1]);
+						videoTimestamp[safeBufferIndex^1] = (long)(seconds() * 1000);
+						safeBufferIndex ^= 1;
+						
+						if(enableCbcuiVision)
+						{
+							//CBC Function Call
+							//#TODO Uncomment the following line
+							write_external_camera_data();
+						}
+						else
+						{
+							//CBC Function Call
+							//#TODO Uncomment the following line
+							delete_external_camera_data();
+						}
+
+						//ccxx::Thread::sleep(20);
+						msleep(20);
+						// End Mod
+
+						//::printf("vd length--> %d\n", videoDataLength);
+						//::Thread::sleep(20);
+					}
+				}
+				catch (ccxx::TimeoutException& timeoutEx) 
+				{
+					std::cout << "VideoDataReceiver TIMEOUT exception thrown.." << timeoutEx.what() << std::endl;
+				}
+				catch (ccxx::Exception& ex) 
+				{
+					std::cout << "VideoDataReceiver exception thrown.." << ex.what() << std::endl;
+				}
+			}//while
+		}
+		catch (ccxx::Exception& ex) 
+		{
+			std::cout << "VideoDataReceiver exception thrown.." << ex.what() << std::endl;
+		}
+		
+		std::cout << "VideoDataReceiver stopped\n";
+	}
+	
+	void VideoDataReceiver::copyDataTo(ARDrone::VideoDecoder::Image& resultImage)
+	{
+		synchronized(myMutex)
+		{
+			ARDrone::VideoDecoder::decodeImage(myVideoData, videoDataLength, resultImage);
+			//::printf("%d, %d\n", resultImage.width, resultImage.height);
+		}
+	}
+	
+// Jeremy Rand Mod
+	void VideoDataReceiver::copyDataTo(ARDrone::VideoDecoder::Image& resultImage, long& timestamp)
+	{		
+		if(safeBufferIndex == 0 || safeBufferIndex == 1)
+		{
+			resultImage = videoBuffer[safeBufferIndex];
+			timestamp = videoTimestamp[safeBufferIndex];
+		}
+	}
+ 
+	void VideoDataReceiver::setEnableCbcuiVision(bool enable)
+	{
+		enableCbcuiVision = enable;
+	}
+//End Mod
+}//namespace ARDrone
