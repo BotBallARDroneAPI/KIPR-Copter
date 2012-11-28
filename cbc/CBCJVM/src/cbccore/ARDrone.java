@@ -31,6 +31,11 @@ public class ARDrone{
 	
 	static
 	{
-			System.load("/mnt/kiss/jvm/cbc/CBC.so");
+		try {
+			System.load("/mnt/kiss/jvm/cbc/CBC.so");	
+		}
+		catch(UnsatisfiedLinkError e) {
+			e.printStackTrace();
+		}
 	}
 }
