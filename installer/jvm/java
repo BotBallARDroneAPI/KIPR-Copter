@@ -1,0 +1,3 @@
+#!/bin/sh
+LD_LIBRARY_PATH=/mnt/kiss/jvm/lib /mnt/kiss/jvm/jamvm -mx10M -cp /mnt/kiss/jvm/cbc:./ -Xbootclasspath:/mnt/kiss/jvm/lib/classes.zip:/mnt/kiss/jvm/lib/glibj.zip -DCBC $1 ./
+

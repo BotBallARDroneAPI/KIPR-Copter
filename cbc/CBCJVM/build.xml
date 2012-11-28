@@ -1,0 +1,69 @@
+<project name="CBCJVM" default="dist" basedir=".">
+	<description>
+		Compiles the high-level Java libraries for the CBC
+	</description>
+	<!-- set global properties for this build -->
+	<property name="src" location="src"/>
+	<property name="build" location="bin"/>
+	<property name="dist" location="dist"/>
+	<property name="docs" location="docs/api"/>
+	<property name="tests" location="tests"/>
+	<property name="tests-antfile" location="${tests}/build.xml"/>
+	
+	<target name="init" depends="clean">
+		<tstamp/>
+		<mkdir dir="${build}"/>
+		<mkdir dir="${docs}"/>
+	</target>
+	
+	<target name="compile" depends="init"
+				description="compile the source " >
+		<javac srcdir="${src}" destdir="${build}" debug="true"
+		       debuglevel="lines,vars,source">
+			<!--compilerarg value="-Xlint:unchecked"/-->
+		</javac>
+	</target>
+	
+	<target name="document">
+		<javadoc packagenames="cbccore.*"
+		         sourcepath="src"
+		         excludepackagenames="cbccore.low.simulator.*"
+		         destdir="${docs}"
+		         author="true"
+		         version="true"
+		         use="true"
+		         windowtitle="CBCJVM API - JavaDoc">
+			<doctitle><![CDATA[<h1>CBCJVM API</h1>]]></doctitle>
+			<bottom><![CDATA[<i>Copyright &#169; 2010 Benjamin Woodruff, Braden
+				McDorman, and anyone else who is cited at an author.GPLv3
+				Licensed.
+				<p>Fork us on
+				<a href = "http://github.com/catron/CBCJVM">github</a>!</i>]]>
+			</bottom>
+			<tag name=".todo" scope="all" description="To Do:"/>
+		</javadoc>
+	</target>
+	
+	<target name="dist" description="generate the distribution">
+		<parallel>
+			<antcall target="compile"/>
+			<antcall target="document"/>
+		</parallel>
+		<mkdir dir="${dist}/lib"/>
+		<jar jarfile="${dist}/lib/CBCJVM.jar" basedir="${build}"/>
+	</target>
+	
+	<target name="clean" description="clean up">
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+		<delete dir="${docs}"/>
+	</target>
+	
+	<target name="test"
+	        description=
+	        "Builds CBCJVM and the unit tests, and runs the unit tests"
+	        depends="compile">
+		<echo level="info" message="Calling ant for ${test-antfile}"/>
+		<ant antfile="${tests-antfile}" inheritAll="false"/>
+	</target>
+</project>

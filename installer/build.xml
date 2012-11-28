@@ -1,0 +1,57 @@
+<project name="installer" default="dist">
+	<description>
+		Generate the install directory, used to install CBCJava
+	</description>
+	
+	<!-- set global properties for this build -->
+	<property name="install" location="install"/>
+	<property name="installData" location="${install}/install_data"/>
+	<property name="targetLibraries" location="${installData}/jvm/lib"/>
+	<property name="sourceLibraries" location="lib"/>
+	<property name="targetJVM" location="${installData}/jvm"/>
+	<property name="sourceJVM" location="jvm"/>
+	<property name="targetJNI-java" location="${targetJVM}/cbc"/>
+	<property name="targetJNI-c" location="${targetJVM}/cbc/jni"/>
+	<property name="sourceJNI-java" location="../cbc/CBCJVM/bin"/>
+	<property name="sourceJNI-c" location="../cbc/CBCJVM/jni"/>
+	<property name="targetCode" location="${installData}/code"/>
+	<property name="sourceCode" location="../cbc/CBCJVM/examples/"/>
+	
+	<target name="init" depends="clean"
+	        description="initialize folder structure">
+		<!-- Build directory structure -->
+		<mkdir dir="${install}"/>
+		<mkdir dir="${installData}"/>
+		<mkdir dir="${targetLibraries}"/>
+		<mkdir dir="${targetJVM}"/>
+		<mkdir dir="${targetJNI-java}"/>
+		<mkdir dir="${targetJNI-c}"/>
+		<mkdir dir="${targetCode}"/>
+	</target>
+	
+	<target name="dist" depends="init" description="generate the distribution">
+		<parallel>
+			<copy todir="${targetLibraries}">
+				<fileset dir="${sourceLibraries}"/>
+			</copy>
+			<copy todir="${targetJVM}">
+				<fileset dir="${sourceJVM}"/>
+			</copy>
+			<copy todir="${targetJNI-java}">
+				<fileset dir="${sourceJNI-java}"/>
+			</copy>
+			<copy todir="${targetJNI-c}">
+				<fileset dir="${sourceJNI-c}"/>
+			</copy>
+			<copy todir="${targetCode}">
+				<fileset dir="${sourceCode}"/>
+			</copy>
+		</parallel>
+	</target>
+	
+	<target name="clean" description="deletes install folder">
+		<!-- This is the only thing we have to delete; the entire install
+		     structure is maintained within here -->
+		<delete dir="${installData}"/>
+	</target>
+</project>
