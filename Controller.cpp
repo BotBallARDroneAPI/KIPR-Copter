@@ -45,6 +45,7 @@ namespace ARDrone
 	}
 	void Controller::takeOff()
 	{
+        sendFlatTrim();
 		myCommunicationChannel.sendAT(ATSTATE_COMMAND.c_str(), TAKEOFF_ARG.c_str());
 	}
 	void Controller::land()
